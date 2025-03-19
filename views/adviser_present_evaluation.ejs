@@ -27,6 +27,7 @@
             box-sizing: border-box;
             padding-top: 80px;
         }
+
         h2 {
             color: #000080;
             text-align: center;
@@ -106,6 +107,7 @@
             align-items: center;
         }
 
+        /* ขนาดและการจัดรูปแบบของเนื้อหาใน Modal */
         .modal-content {
             background-color: #fff;
             padding: 20px;
@@ -114,10 +116,16 @@
             max-width: 800px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-height: 80vh;
-            /* กำหนดความสูงสูงสุด */
+            /* ความสูงสูงสุด */
             overflow: auto;
-            /* เลื่อนเฉพาะในแนวตั้ง */
+            /* ให้เลื่อนเฉพาะในแนวตั้ง */
+            z-index: 1001;
+            /* ทำให้เนื้อหาภายในโมเดลอยู่เหนือพื้นหลังมืด */
+            margin-left: 20%;
+            margin-bottom: 10%;
+            margin-top: 10%;
         }
+
 
         .close-btn {
             background-color: #ff4d4d;
@@ -160,7 +168,8 @@
 
 <body>
     <div id="sidebar-container">
-    <%- include('partials/sidebar', { user: user }) %></div>
+        <%- include('partials/sidebar', { user: user }) %>
+    </div>
 
     <div class="header">
         <span class="material-symbols-outlined">menu</span>
@@ -170,19 +179,20 @@
     <div class="container">
         <h2 class="topic">แบบฟอร์มการประเมินการนำเสนอ</h2>
 
-    <input type="text" id="search-input" placeholder="ค้นหารหัสนักศึกษาหรือชื่อนักศึกษา..." onkeyup="filterStudents()">
+        <input type="text" id="search-input" placeholder="ค้นหารหัสนักศึกษาหรือชื่อนักศึกษา..."
+            onkeyup="filterStudents()">
 
-    <table>
-        <thead>
-            <tr>
-                <th>รหัสนักศึกษา</th>
-                <th>ชื่อนักศึกษา</th>
-                <th>การประเมินการนำเสนอ</th>
-            </tr>
-        </thead>
-        <tbody id="student-table"></tbody>
-    </table>
-</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>รหัสนักศึกษา</th>
+                    <th>ชื่อนักศึกษา</th>
+                    <th>การประเมินการนำเสนอ</th>
+                </tr>
+            </thead>
+            <tbody id="student-table"></tbody>
+        </table>
+    </div>
 
     <!-- Modal -->
     <div id="evaluation-modal" style="display: none;">
@@ -245,15 +255,15 @@
             </div>
             <button onclick="submitEvaluation(currentStudentId)">ส่งการประเมิน</button>
         </div>
-       
+
     </div>
-        <div id="footer-container">
-            <%- include('partials/footer.html') %> <!-- แสดง Footer -->
-        </div>
+    <div id="footer-container">
+        <%- include('partials/footer.html') %> <!-- แสดง Footer -->
+    </div>
     <script>
         const BASE_URL = "http://localhost:3000"; // URL ของเซิร์ฟเวอร์ Express.js
         var students = [];
-    
+
         // ดึงข้อมูลนักศึกษา
         fetch(`${BASE_URL}/adviser_present_evaluation/dashboard/students`)
             .then(res => res.json())
@@ -268,9 +278,9 @@
             .catch(error => {
                 console.error('❌ Error loading students:', error);
             });
-    
+
         var currentStudentId = null;
-    
+
         // ฟังก์ชันสำหรับสร้างตารางแสดงข้อมูลนักศึกษา
         function createStudentTable(studentList) {
             var tableBody = document.getElementById('student-table');
@@ -285,7 +295,7 @@
                 tableBody.appendChild(row);
             });
         }
-    
+
         // ฟังก์ชันค้นหานักศึกษา
         function filterStudents() {
             var searchInput = document.getElementById('search-input').value.toLowerCase();
@@ -294,24 +304,24 @@
             });
             createStudentTable(filteredStudents);
         }
-    
+
         // ฟังก์ชันเปิด Modal สำหรับการประเมิน
         function openModal(requestId, name) {
             currentStudentId = requestId; // ตั้งค่า currentStudentId ให้เป็น request_id ของนักศึกษา
             document.getElementById('modal-title').innerText = `ประเมินการนำเสนอของ ${name}`;
             document.getElementById('evaluation-modal').style.display = 'flex';
         }
-    
+
         // ฟังก์ชันปิด Modal
         function closeModal() {
             document.getElementById('evaluation-modal').style.display = 'none';
         }
-    
+
         // คำนวณคะแนนรวม
         document.addEventListener("DOMContentLoaded", function () {
             const inputs = document.querySelectorAll('input[type="number"]');
             const totalScoreElement = document.getElementById('totalScore');
-    
+
             function calculateTotal() {
                 let total = 0;
                 inputs.forEach(input => {
@@ -319,31 +329,31 @@
                 });
                 totalScoreElement.textContent = total;
             }
-    
+
             inputs.forEach(input => {
                 input.addEventListener("input", calculateTotal);
             });
-    
+
             calculateTotal();
         });
-    
+
         // ฟังก์ชันบันทึกการประเมิน
         function submitEvaluation() {
             if (!currentStudentId) {
                 alert('ไม่พบรหัสนักศึกษาที่จะประเมิน');
                 return;
             }
-    
+
             const scoreInputs = document.querySelectorAll('input[type="number"]');
             const scores = [];
             scoreInputs.forEach(input => {
                 scores.push(Number(input.value) || 0);
             });
-    
+
             const additionalComments = document.getElementById('additionalComments').value;
-    
+
             const request_id = currentStudentId; // ใช้ requestId ที่ได้รับจาก Modal
-    
+
             const criteriaNames = [
                 "เนื้อหาครบถ้วนตามหัวข้อที่กำหนด",
                 "รูปแบบของสื่อเหมาะสมกับเนื้อหาที่นำเสนอ",
@@ -353,7 +363,7 @@
                 "นำเสนอภายในเวลาที่กำหนด",
                 "บุคลิกภาพและการแต่งกาย"
             ];
-    
+
             // ส่งข้อมูลการประเมินไปยัง backend
             fetch(`${BASE_URL}/adviser_present_evaluation/dashboard/save`, {
                 method: 'POST',
@@ -378,7 +388,7 @@
                 });
         }
     </script>
-    
+
 </body>
 
 </html>

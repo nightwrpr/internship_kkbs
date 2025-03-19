@@ -111,16 +111,20 @@
 
         .modal-content {
             background-color: #fff;
-            justify-content: center;
             padding: 20px;
             border-radius: 8px;
             width: 60%;
             max-width: 800px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             max-height: 80vh;
-            /* กำหนดความสูงสูงสุด */
+            /* ความสูงสูงสุด */
             overflow: auto;
-            /* เลื่อนเฉพาะในแนวตั้ง */
+            /* ให้เลื่อนเฉพาะในแนวตั้ง */
+            z-index: 1001;
+            /* ทำให้เนื้อหาภายในโมเดลอยู่เหนือพื้นหลังมืด */
+            margin-left: 30%;
+            margin-top: 10%;
+            margin-bottom: 10%;
         }
 
         .close-btn {
@@ -170,7 +174,7 @@
         <h5>ประเมินนิเทศน์ของนักศึกษา</h5>
         <span class="material-symbols-outlined">more_vert</span>
     </div>
-    
+
 
     <div class="container">
         <h2>รายชื่อนักศึกษาฝึกงาน</h2>
