@@ -60,7 +60,7 @@ app.use(session({
     cookie: { secure: process.env.NODE_ENV === 'production' }
 }));
 const cors = require('cors');
-app.use(cors({ origin: 'https://kkbs-internship-github-io.onrender.com', credentials: true }));
+app.use(cors({ origin: 'https://internship-kkbs.onrender.com', credentials: true }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
