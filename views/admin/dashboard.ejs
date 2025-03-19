@@ -11,7 +11,25 @@
 
     <title>Admin Dashboard</title>
 </head>
+<style> body {
+    font-family: 'Kanit', sans-serif;
+    background-color: #f8f9fa;
+}
 
+.main-content {
+    margin-left: 270px;
+    margin-top: 80px;
+    /* เลื่อนออกจาก sidebar */
+    padding: 20px;
+    width: calc(100vw - 250px);
+    /* ป้องกันการเกินขอบจอ */
+    max-width: 100vw;
+    /* ไม่ให้เกินหน้าจอ */
+    box-sizing: border-box;
+    padding-top: 80px;
+    padding-bottom: 60px;
+    margin-left: 20%;
+}</style>
 <body>
     <div id="sidebar-container"></div>
     <%- include('../partials/sidebar', { user: admin }) %>
@@ -24,26 +42,6 @@
             <span class="material-symbols-outlined">more_vert</span>
         </div>
 
-        <div class="content mt-4">
-            <h2><strong>ยินดีต้อนรับ</strong></h2>
-
-            <!-- Card for Admin Information -->
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h5><strong>ข้อมูลของผู้ดูแลระบบ</strong></h5>
-                </div>
-                <div class="card-body">
-                    <blockquote class="blockquote mb-0">
-                        <p><strong>
-                                ชื่อ: <%= admin.name %><br>
-                                อีเมล: <%= admin.email %>
-                            </strong><br><br>
-                            <strong>บทบาท: </strong>
-                            <%= admin.role || 'ไม่มีข้อมูล' %>
-                        </p>
-                    </blockquote>
-                </div>
-            </div>
 
             <!-- Cards Container -->
             <div class="container">
@@ -54,8 +52,8 @@
                             <div class="card-body">
                                 <h5 class="card-title"><span
                                         class="material-symbols-outlined">group</span>จัดการผู้ใช้</h5>
-                                <p class="card-text">จัดการบัญชีผู้ใช้ของระบบ เช่น นักศึกษาและอาจารย์</p>
-                                <a href="/admin/users" class="btn btn-primary">ดูรายละเอียด</a>
+                                <p class="card-text">จัดการบัญชีผู้ใช้ของระบบ</p>
+                                <a href="/edit_user" class="btn btn-primary">ดูรายละเอียด</a>
                             </div>
                         </div>
                     </div>
@@ -65,9 +63,9 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"><span
-                                        class="material-symbols-outlined">analytics</span>รายงาน</h5>
-                                <p class="card-text">ดูรายงานข้อมูลที่เกี่ยวข้องกับการฝึกประสบการณ์</p>
-                                <a href="/admin/reports" class="btn btn-primary">ดูรายละเอียด</a>
+                                        class="material-symbols-outlined">analytics</span>จัดการเอกสาร</h5>
+                                <p class="card-text">ดูหรือลบเอกสารภายในระบบ</p>
+                                <a href="/manage_document" class="btn btn-primary">ดูรายละเอียด</a>
                             </div>
                         </div>
                     </div>
@@ -77,9 +75,9 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title"><span
-                                        class="material-symbols-outlined">settings</span>การตั้งค่า</h5>
-                                <p class="card-text">ปรับแต่งการตั้งค่าของระบบสำหรับผู้ดูแลระบบ</p>
-                                <a href="/admin/settings" class="btn btn-primary">ดูรายละเอียด</a>
+                                        class="material-symbols-outlined">settings</span>สถานประกอบการณ์</h5>
+                                <p class="card-text">จัดการข้อมูลสถานประกอบการ</p>
+                                <a href="/manage_company" class="btn btn-primary">ดูรายละเอียด</a>
                             </div>
                         </div>
                     </div>
