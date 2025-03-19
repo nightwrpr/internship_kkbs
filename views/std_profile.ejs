@@ -7,14 +7,33 @@
     <title>โปรไฟล์นักศึกษา</title>
     <style>
         body {
-            font-family: 'Kanit', sans-serif;
-            margin: 20px;
-            background-color: #f9f9f9;
-            text-align: center;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+            padding-bottom: 50px;
+            /* เพิ่มพื้นที่ด้านล่างให้พอสำหรับ footer */
         }
 
         h2 {
             color: #000080;
+            text-align: center;
+            /* จัดหัวข้ออยู่กลาง */
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            /* ✅ จัดตรงกลางแนวนอน */
+            align-items: center;
+            /* ✅ จัดตรงกลางแนวตั้ง (ถ้าสูงเต็มจอ) */
+            min-height: 100vh;
+            /* ✅ ทำให้คอนเทนต์สูงเต็มจอ */
+            margin-left: 250px;
+            /* ✅ กันไม่ให้ทับ Sidebar */
+            padding-top: 80px;
+            /* ✅ กัน Header ทับ */
+            padding-bottom: 60px;
+            /* ✅ กัน Footer ทับ */
         }
 
         .profile-container {
@@ -23,7 +42,7 @@
             border-radius: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             width: 60%;
-            margin: 0 auto;
+            max-width: 800px;
             text-align: left;
         }
 
@@ -48,12 +67,46 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
         }
 
         button:hover {
             background-color: rgba(0, 0, 128, 0.8);
         }
+
+        @media (max-width: 768px) {
+
+            /* ทำให้ .main-content ไม่ให้เต็มจอและเว้นระยะขอบ */
+            .main-content {
+                flex-direction: column;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                margin-left: 0;
+                min-height: auto;
+                /* ไม่ต้องใช้ min-height 100vh */
+            }
+
+            /* ทำให้ profile-container กว้างขึ้น */
+            .profile-container {
+                width: 90%;
+                /* ทำให้กว้าง 90% ของหน้าจอ */
+                padding: 15px;
+            }
+
+            /* ปรับขนาดของหัวข้อ */
+            h2 {
+                font-size: 20px;
+            }
+
+            /* ปรับขนาดปุ่มให้เหมาะสม */
+            button {
+                padding: 12px;
+            }
+        }
     </style>
+
 </head>
 
 <body>
