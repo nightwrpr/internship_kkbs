@@ -12,25 +12,22 @@
     <title>แบบประเมินรายงานฝึกประสบการณ์</title>
     <style>
         body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            /* ให้ body ขยายเต็มความสูงของหน้าจอ */
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
         }
 
         .container {
-            flex: 1;
-            /* ให้ container ขยายตัวได้เต็มที่ */
-            max-width: 800px;
-            background: white;
+            margin-left: 270px;
+            margin-top: 80px;
+            /* เลื่อนออกจาก sidebar */
             padding: 20px;
-            margin: auto;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            width: calc(100vw - 250px);
+            /* ป้องกันการเกินขอบจอ */
+            max-width: 100vw;
+            /* ไม่ให้เกินหน้าจอ */
+            box-sizing: border-box;
+            padding-top: 80px;
+            padding-bottom: 60px
         }
 
         h2 {
@@ -129,21 +126,17 @@
             border: 1px solid #ccc;
             resize: vertical;
         }
-
-        footer {
-            margin-top: 20px;
-            /* Ensure footer is always at the bottom */
-            background: #000080;
-            color: rgb(17, 0, 255);
-            text-align: center;
-            padding: 30px;
-        }
     </style>
 </head>
 
 <body>
     <div id="sidebar-container">
         <%- include('partials/sidebar', { user: teacher || user }) %>
+    </div>
+    <div class="header">
+        <span class="material-symbols-outlined">menu</span>
+        <h5 class="mb-0">ตรวจและประเมินรายงาน</h5>
+        <span class="material-symbols-outlined">more_vert</span>
     </div>
     <div class="container">
         <h2>แบบประเมินรายงานฝึกประสบการณ์วิชาชีพ</h2>
@@ -228,10 +221,6 @@
             <button type="submit">ส่งการประเมิน</button>
         </form>
     </div>
-    <footer>
-        <%- include('partials/footer.html') %> <!-- แสดง Footer -->
-    </footer>
-
     <script>
         function updateTotalScore() {
             let total = 0;
@@ -256,4 +245,5 @@
         }
     </script>
 </body>
+
 </html>
