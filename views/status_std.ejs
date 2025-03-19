@@ -16,7 +16,6 @@
             font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
         }
-
         .main-content {
             margin-left: 270px;
             margin-top: 80px;
@@ -29,6 +28,7 @@
             box-sizing: border-box;
             padding-top: 80px;
             padding-bottom: 60px
+
         }
 
         h2 {
@@ -162,235 +162,169 @@
             color: red;
             font-weight: bold;
         }
-
-        @media (max-width: 768px) {
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-                padding-top: 20px;
-                padding-bottom: 20px;
-            }
-
-            table {
-                width: 95%;
-            }
-
-            .button-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            button {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-
-            #details-modal {
-                width: 90%;
-                max-width: none;
-                padding: 10px;
-            }
-
-            .modal-content {
-                width: 100%;
-                max-width: none;
-                padding: 20px;
-                margin-bottom: 20px;
-                max-height: 70vh;
-            }
-
-            h2 {
-                font-size: 18px;
-            }
-        }
-
-        /* Media Query for Medium Screens (max-width: 1024px) */
-        @media (max-width: 1024px) {
-            .main-content {
-                margin-left: 200px;
-                padding-top: 30px;
-                padding-bottom: 30px;
-            }
-
-            table {
-                width: 90%;
-            }
-
-            .button-container {
-                gap: 8px;
-            }
-
-            #details-modal {
-                width: 85%;
-            }
-
-            .modal-content {
-                padding: 25px;
-            }
-        }
     </style>
 </head>
 
 <body>
     <div id="sidebar-container">
-        <%- include('partials/sidebar', { user: user }) %>
-    </div>
+    <%- include('partials/sidebar', { user: user }) %>
+</div>
     <div class="header">
         <span class="material-symbols-outlined">menu</span>
         <h5>ส่งรายงานการฝึกงาน</h5>
         <span class="material-symbols-outlined">more_vert</span>
     </div>
 
-    <div class="main-content">
-        <table>
-            <thead>
-                <tr>
-                    <th>ชื่อสถานประกอบการ</th>
-                    <th>สถานะคำร้อง</th>
-                    <th>ดูรายละเอียด</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% if (requests && requests.length> 0) { %>
-                    <% requests.forEach(request=> { %>
-                        <tr>
-                            <td>
-                                <%= request.company_name %>
-                            </td>
-                            <td id="status-<%= request.request_id %>" class="<%= request.status === 'P' ? 'status-pending' 
+        <div class="main-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ชื่อสถานประกอบการ</th>
+                        <th>สถานะคำร้อง</th>
+                        <th>ดูรายละเอียด</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (requests && requests.length> 0) { %>
+                        <% requests.forEach(request=> { %>
+                            <tr>
+                                <td>
+                                    <%= request.company_name %>
+                                </td>
+                                <td id="status-<%= request.request_id %>" class="<%= request.status === 'P' ? 'status-pending' 
                                           : request.status === 'A' ? 'status-approved' 
                                           : request.status === 'R' ? 'status-rejected' 
                                           : '' %>">
-                                <span>
-                                    <%= statusText(request.status) %>
-                                </span> <!-- ใช้ฟังก์ชันที่ส่งมา -->
-                            </td>
-                            <td>
-                                <button onclick="showDetails('<%= request.request_id %>')">ดูรายละเอียด</button>
-                            </td>
-                        </tr>
-                        <% }); %>
-                            <% } else { %>
-                                <tr>
-                                    <td colspan="3" style="text-align:center;">ไม่มีข้อมูลคำร้อง</td>
-                                </tr>
-                                <% } %>
-            </tbody>
-        </table>
+                                    <span>
+                                        <%= statusText(request.status) %>
+                                    </span> <!-- ใช้ฟังก์ชันที่ส่งมา -->
+                                </td>
+                                <td>
+                                    <button onclick="showDetails('<%= request.request_id %>')">ดูรายละเอียด</button>
+                                </td>
+                            </tr>
+                            <% }); %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="3" style="text-align:center;">ไม่มีข้อมูลคำร้อง</td>
+                                    </tr>
+                                    <% } %>
+                </tbody>
+            </table>
 
-        <!-- Modal -->
-        <div id="details-modal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <h3>รายละเอียดคำร้อง</h3>
-                <p><strong>รหัสคำร้อง:</strong> <span id="detail-request-id"></span></p>
-                <p><strong>สถานะคำร้อง:</strong> <span id="detail-status"></span></p>
-                <p><strong>ชื่อสถานประกอบการ:</strong> <span id="detail-company"></span></p>
-                <p><strong>ตำแหน่งที่ต้องการฝึก:</strong> <span id="detail-position"></span></p>
-                <p><strong>วันที่เริ่มฝึก:</strong> <span id="detail-start-date"></span></p>
-                <p><strong>วันที่สิ้นสุดการฝึก:</strong> <span id="detail-end-date"></span></p>
-                <p><strong>เอกสารที่แนบ:</strong></p>
-                <ul id="document-list"></ul>
-                <p><strong>เอกสาร PDF:</strong></p>
-                <div id="documents"></div> <!-- แสดง PDF ที่นี่ -->
-                <div class="button-container">
-                    <button onclick="closeDetails()">ปิดรายละเอียด</button>
+            <!-- Modal -->
+            <div id="details-modal" class="modal" style="display:none;">
+                <div class="modal-content">
+                    <h3>รายละเอียดคำร้อง</h3>
+                    <p><strong>รหัสคำร้อง:</strong> <span id="detail-request-id"></span></p>
+                    <p><strong>สถานะคำร้อง:</strong> <span id="detail-status"></span></p>
+                    <p><strong>ชื่อสถานประกอบการ:</strong> <span id="detail-company"></span></p>
+                    <p><strong>ตำแหน่งที่ต้องการฝึก:</strong> <span id="detail-position"></span></p>
+                    <p><strong>วันที่เริ่มฝึก:</strong> <span id="detail-start-date"></span></p>
+                    <p><strong>วันที่สิ้นสุดการฝึก:</strong> <span id="detail-end-date"></span></p>
+                    <p><strong>เอกสารที่แนบ:</strong></p>
+                    <ul id="document-list"></ul>
+                    <p><strong>เอกสาร PDF:</strong></p>
+                    <div id="documents"></div> <!-- แสดง PDF ที่นี่ -->
+                    <div class="button-container">
+                        <button onclick="closeDetails()">ปิดรายละเอียด</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div id="footer-container"></div>
-    <%- include('partials/footer.html') %>
+        <div id="footer-container"></div>
+        <%- include('partials/footer.html') %>
 
-        <div id="data" style="display:none" data-requests='<%= JSON.stringify(requests || []) %>'
-            data-documents='<%= JSON.stringify(documents || []) %>'>
-        </div>
+            <div id="data" style="display:none" data-requests='<%= JSON.stringify(requests || []) %>'
+                data-documents='<%= JSON.stringify(documents || []) %>'>
+            </div>
 
-        <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
-        <script>
-            let requests = [];
-            let documents = [];
+            <script src="https://mozilla.github.io/pdf.js/build/pdf.js"></script>
+            <script>
+                let requests = [];
+                let documents = [];
 
-            document.addEventListener("DOMContentLoaded", function () {
-                try {
-                    const dataElement = document.getElementById("data");
-                    requests = JSON.parse(dataElement.dataset.requests) || [];
-                    documents = JSON.parse(dataElement.dataset.documents) || [];
-                    console.log("✅ โหลดข้อมูลสำเร็จ:", requests, documents);
-                } catch (error) {
-                    console.error("❌ เกิดข้อผิดพลาดในการแปลง JSON:", error);
-                }
-            });
-
-            function showDetails(requestId) {
-                const request = requests.find(req => req.request_id == requestId);
-                if (!request) return;
-
-                document.getElementById("detail-status").innerText = statusText[request.status] || 'ไม่ทราบสถานะ';
-                document.getElementById("detail-company").innerText = request.company_name;
-                document.getElementById("detail-position").innerText = request.position_name || "ไม่ระบุ";
-                document.getElementById("detail-start-date").innerText = formatDate(request.request_start_date);
-                document.getElementById("detail-end-date").innerText = formatDate(request.request_end_date);
-                document.getElementById("detail-request-id").innerText = request.request_id;
-
-                const foundDocuments = documents.filter(doc => doc.request_id == requestId);
-                const documentList = document.getElementById("document-list");
-                documentList.innerHTML = "";
-                const pdfViewerContainer = document.getElementById("documents");
-                pdfViewerContainer.innerHTML = ""; // เคลียร์พื้นที่แสดงผล PDF
-
-                if (foundDocuments.length === 0) {
-                    pdfViewerContainer.innerHTML = "ไม่พบเอกสาร";
-                    return;
-                }
-
-                foundDocuments.forEach(doc => {
-                    const filePath = doc.file_path;
-                    if (!filePath) return;
-
-                    const fileName = filePath.split("\\").pop();
-                    const listItem = document.createElement("li");
-                    const fileLink = document.createElement("a");
-
-                    // แก้ไขเส้นทางที่ถูกต้อง
-                    fileLink.href = `/uploads/${fileName}`;
-                    fileLink.innerText = fileName;
-                    fileLink.target = "_blank";
-                    listItem.appendChild(fileLink);
-                    documentList.appendChild(listItem);
-
-                    // แสดง PDF ใน iframe
-                    loadPdfInIframe(`/uploads/${fileName}`, pdfViewerContainer);
+                document.addEventListener("DOMContentLoaded", function () {
+                    try {
+                        const dataElement = document.getElementById("data");
+                        requests = JSON.parse(dataElement.dataset.requests) || [];
+                        documents = JSON.parse(dataElement.dataset.documents) || [];
+                        console.log("✅ โหลดข้อมูลสำเร็จ:", requests, documents);
+                    } catch (error) {
+                        console.error("❌ เกิดข้อผิดพลาดในการแปลง JSON:", error);
+                    }
                 });
 
-                document.getElementById("details-modal").style.display = "block";
-            }
-            // ฟังก์ชันแสดง PDF ใน iframe
-            function loadPdfInIframe(pdfUrl, container) {
-                const iframe = document.createElement("iframe");
-                iframe.src = pdfUrl; // ใช้ URL ของไฟล์ PDF
-                iframe.width = "100%";
-                iframe.height = "500px"; // กำหนดความสูงของ iframe
-                container.appendChild(iframe);
-            }
+                function showDetails(requestId) {
+                    const request = requests.find(req => req.request_id == requestId);
+                    if (!request) return;
 
-            function closeDetails() {
-                document.getElementById("details-modal").style.display = "none";
-            }
+                    document.getElementById("detail-status").innerText = statusText[request.status] || 'ไม่ทราบสถานะ';
+                    document.getElementById("detail-company").innerText = request.company_name;
+                    document.getElementById("detail-position").innerText = request.position_name || "ไม่ระบุ";
+                    document.getElementById("detail-start-date").innerText = formatDate(request.request_start_date);
+                    document.getElementById("detail-end-date").innerText = formatDate(request.request_end_date);
+                    document.getElementById("detail-request-id").innerText = request.request_id;
 
-            function formatDate(dateString) {
-                return new Date(dateString).toLocaleDateString("th-TH");
-            }
+                    const foundDocuments = documents.filter(doc => doc.request_id == requestId);
+                    const documentList = document.getElementById("document-list");
+                    documentList.innerHTML = "";
+                    const pdfViewerContainer = document.getElementById("documents");
+                    pdfViewerContainer.innerHTML = ""; // เคลียร์พื้นที่แสดงผล PDF
 
-            function statusText(status) {
-                switch (status) {
-                    case 'P': return 'รอการอนุมัติ';
-                    case 'A': return 'อนุมัติ';
-                    case 'R': return 'ไม่อนุมัติ';
-                    default: return 'ไม่ระบุ';
+                    if (foundDocuments.length === 0) {
+                        pdfViewerContainer.innerHTML = "ไม่พบเอกสาร";
+                        return;
+                    }
+
+                    foundDocuments.forEach(doc => {
+                        const filePath = doc.file_path;
+                        if (!filePath) return;
+
+                        const fileName = filePath.split("\\").pop();
+                        const listItem = document.createElement("li");
+                        const fileLink = document.createElement("a");
+
+                        // แก้ไขเส้นทางที่ถูกต้อง
+                        fileLink.href = `/uploads/${fileName}`;
+                        fileLink.innerText = fileName;
+                        fileLink.target = "_blank";
+                        listItem.appendChild(fileLink);
+                        documentList.appendChild(listItem);
+
+                        // แสดง PDF ใน iframe
+                        loadPdfInIframe(`/uploads/${fileName}`, pdfViewerContainer);
+                    });
+
+                    document.getElementById("details-modal").style.display = "block";
                 }
-            }
-        </script>
+                // ฟังก์ชันแสดง PDF ใน iframe
+                function loadPdfInIframe(pdfUrl, container) {
+                    const iframe = document.createElement("iframe");
+                    iframe.src = pdfUrl; // ใช้ URL ของไฟล์ PDF
+                    iframe.width = "100%";
+                    iframe.height = "500px"; // กำหนดความสูงของ iframe
+                    container.appendChild(iframe);
+                }
+
+                function closeDetails() {
+                    document.getElementById("details-modal").style.display = "none";
+                }
+
+                function formatDate(dateString) {
+                    return new Date(dateString).toLocaleDateString("th-TH");
+                }
+
+                function statusText(status) {
+                    switch (status) {
+                        case 'P': return 'รอการอนุมัติ';
+                        case 'A': return 'อนุมัติ';
+                        case 'R': return 'ไม่อนุมัติ';
+                        default: return 'ไม่ระบุ';
+                    }
+                }
+            </script>
 </body>
 
 </html>
