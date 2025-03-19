@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,24 +13,22 @@
     <title>ส่งรายงานการฝึกงาน</title>
     <style>
         body {
-            font-family: 'Kanit', sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
         }
 
-        .container {
-            background-color: white;
+        .main-content {
+            margin-left: 270px;
+            margin-top: 80px;
+            /* เลื่อนออกจาก sidebar */
             padding: 20px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            width: 100%;
-            max-width: 500px;
+            width: calc(100vw - 250px);
+            /* ป้องกันการเกินขอบจอ */
+            max-width: 100vw;
+            /* ไม่ให้เกินหน้าจอ */
             box-sizing: border-box;
+            padding-top: 80px;
+            padding-bottom: 60px
         }
 
         h1 {
@@ -55,15 +54,15 @@
         }
 
         button {
-            width: 100%;
-            padding: 12px;
             background-color: #000080;
             color: white;
+            padding: 12px;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-size: 16px;
+            width: 100%;
+            text-align: center !important;
         }
 
         button:hover {
@@ -75,28 +74,32 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <div id="sidebar-container"></div>
-            <%- include('partials/sidebar', { user: user }) %> <!-- แสดง Sidebar -->
-        <div class="main-content">
-            <div class="header d-flex justify-content-between align-items-center">
+        <%- include('partials/sidebar', { user: user }) %> <!-- แสดง Sidebar -->
+
+            <div class="header">
                 <span class="material-symbols-outlined">menu</span>
-                <h1>ส่งรายงานการฝึกงาน</h1>
+                <h5>ส่งรายงานการฝึกงาน</h5>
                 <span class="material-symbols-outlined">more_vert</span>
             </div>
-            <form action="/send_report/submit_report" method="post" enctype="multipart/form-data">
-                <div class="form-group">
-                    <label for="report_file">อัพโหลดไฟล์รายงาน (PDF):</label>
-                    <input type="file" id="report_file" name="report_file" accept="application/pdf" required>
-                </div>
+            <div class="main-content">
+                <form action="/send_report/submit_report" method="post" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="report_file">อัพโหลดไฟล์รายงาน (PDF):</label>
+                        <input type="file" id="report_file" name="report_file" accept="application/pdf" required>
+                    </div>
 
-                <button type="submit">ส่งรายงาน</button>
-            </form>
-        </div>
+                    <button type="submit">ส่งรายงาน</button>
+                </form>
+            </div>
     </div>
     <div id="footer-container">
-        <%- include('partials/footer.html') %> <!-- แสดง Footer -->
+        <!-- รวม footer -->
+        <%- include('partials/footer.html') %>
     </div>
 </body>
+
 </html>

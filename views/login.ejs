@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,7 +45,8 @@
             font-weight: bold;
         }
 
-        input[type="text"], input[type="password"] {
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
             padding: 12px;
             margin: 8px 0 16px 0;
@@ -69,23 +71,25 @@
         }
     </style>
 </head>
+
 <body>
 
-  <form action="/users/login" method="POST">
-    <div class="imgcontainer">
-      <img src="/images/logo.png" alt="Avatar" class="avatar">
-    </div>
+    <form action="/users/login" method="POST">
+        <div class="imgcontainer">
+            <img src="/images/logo.png" alt="logo" class="logo">
+        </div>
 
-    <div class="container">
-      <label for="username"><b>Username</b></label>
-      <input type="text" id="email" name="email" placeholder="Enter Username" required>
+        <div class="container">
+            <label for="username"><b>Username</b></label>
+            <input type="text" id="email" name="email" placeholder="Enter Username" required>
 
-      <label for="password"><b>Password</b></label>
-      <input type="password" id="password" name="password" placeholder="Enter Password" required>
+            <label for="password"><b>Password</b></label>
+            <input type="password" id="password" name="password" placeholder="Enter Password" required>
 
-      <button type="submit">Login</button>
-    </div>
-  </form>
+            <button type="submit">Login</button>
+        </div>
+    </form>
 
 </body>
+
 </html>

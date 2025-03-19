@@ -13,10 +13,22 @@
     <title>สถานะคำร้องฝึกงานของนักศึกษา</title>
     <style>
         body {
-            font-family: 'Kanit', sans-serif;
-            margin: 20px;
+            font-family: 'Arial', sans-serif;
             background-color: #f9f9f9;
-            text-align: center;
+        }
+        .main-content {
+            margin-left: 270px;
+            margin-top: 80px;
+            /* เลื่อนออกจาก sidebar */
+            padding: 20px;
+            width: calc(100vw - 250px);
+            /* ป้องกันการเกินขอบจอ */
+            max-width: 100vw;
+            /* ไม่ให้เกินหน้าจอ */
+            box-sizing: border-box;
+            padding-top: 80px;
+            padding-bottom: 60px
+
         }
 
         h2 {
@@ -154,16 +166,16 @@
 </head>
 
 <body>
-    <div id="sidebar-container"></div>
+    <div id="sidebar-container">
     <%- include('partials/sidebar', { user: user }) %>
+</div>
+    <div class="header">
+        <span class="material-symbols-outlined">menu</span>
+        <h5>ส่งรายงานการฝึกงาน</h5>
+        <span class="material-symbols-outlined">more_vert</span>
+    </div>
 
         <div class="main-content">
-            <div class="header">
-                <span class="material-symbols-outlined">menu</span>
-                <h2>สถานะคำร้องฝึกงานของนักศึกษา</h2>
-                <span class="material-symbols-outlined">more_vert</span>
-            </div>
-
             <table>
                 <thead>
                     <tr>
