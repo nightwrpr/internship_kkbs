@@ -5,12 +5,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ประเมินนักศึกษา-ผู้ทรงคุณวุฒิ</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block">
     <style>
         body {
             font-family: 'Kanit', sans-serif;
-            margin: 20px;
             background-color: #f9f9f9;
+        }
+
+        .container {
+            margin-left: 270px;
+            margin-top: 80px;
+            /* เลื่อนออกจาก sidebar */
+            padding: 20px;
+            width: calc(100vw - 250px);
+            /* ป้องกันการเกินขอบจอ */
+            max-width: 100vw;
+            /* ไม่ให้เกินหน้าจอ */
+            box-sizing: border-box;
+            padding-top: 80px;
+            padding-bottom: 60px;
+            margin-left: 20%;
+        }
+
+        .container {
+            margin-top: 50px;
         }
 
         h2 {
@@ -145,88 +167,101 @@
 </head>
 
 <body>
-    <h2>รายชื่อนักศึกษาฝึกงาน</h2>
+    <div id="sidebar-container">
+        <%- include('partials/sidebar', { user: user }) %>
+    </div>
+    <div class="header">
+        <span class="material-symbols-outlined">menu</span>
+        <h5>ประเมินนักศึกษา-ผู้ทรงคุณวุฒิ</h5>
+        <span class="material-symbols-outlined">more_vert</span>
+    </div>
 
-    <input type="text" id="search-input" placeholder="ค้นหารหัสนักศึกษาหรือชื่อนักศึกษา..." onkeyup="filterStudents()">
+    <div class="container">
+        <h2>รายชื่อนักศึกษาฝึกงาน</h2>
 
-    <table>
-        <thead>
-            <tr>
-                <th>รหัสนักศึกษา</th>
-                <th>ชื่อนักศึกษา</th>
-                <th>การประเมิน</th>
-            </tr>
-        </thead>
-        <tbody id="student-table"></tbody>
-    </table>
+        <input type="text" id="search-input" placeholder="ค้นหารหัสนักศึกษาหรือชื่อนักศึกษา..."
+            onkeyup="filterStudents()">
 
-    <!-- Modal -->
-    <div id="evaluation-modal" style="display: none;">
-        <div class="modal-content">
-            <button class="close-btn" onclick="closeModal()">ปิด</button>
-            <h3 id="modal-title"></h3>
-            <form id="evaluation-form" onsubmit="submitEvaluation(event)">
-                <input type="hidden" id="requestIdInput" name="requestId">
+        <table>
+            <thead>
+                <tr>
+                    <th>รหัสนักศึกษา</th>
+                    <th>ชื่อนักศึกษา</th>
+                    <th>การประเมิน</th>
+                </tr>
+            </thead>
+            <tbody id="student-table"></tbody>
+        </table>
 
-                <table>
-                    <tr>
-                        <th>หัวข้อการประเมิน</th>
-                        <th>คะแนนเต็ม</th>
-                        <th>คะแนนที่ได้</th>
-                    </tr>
-                    <tr>
-                        <td class="left-align">1. เนื้อหาครบถ้วนตามหัวข้อที่กำหนด</td>
-                        <td>15</td>
-                        <td><input type="number" name="score1" max="15" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">2. รูปแบบของสื่อเหมาะสมกับเนื้อหา</td>
-                        <td>5</td>
-                        <td><input type="number" name="score2" max="5" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">3. ความสวยงามของสื่อที่ใช้</td>
-                        <td>5</td>
-                        <td><input type="number" name="score3" max="5" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">4. การใช้ภาษาในการนำเสนอ</td>
-                        <td>5</td>
-                        <td><input type="number" name="score4" max="5" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">5. การตอบคำถาม</td>
-                        <td>10</td>
-                        <td><input type="number" name="score5" max="10" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">6. นำเสนอภายในเวลาที่กำหนด</td>
-                        <td>5</td>
-                        <td><input type="number" name="score6" max="5" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <td class="left-align">7. บุคลิกภาพและการแต่งกาย</td>
-                        <td>5</td>
-                        <td><input type="number" name="score7" max="5" min="0" required></td>
-                    </tr>
-                    <tr>
-                        <th>รวมคะแนนทั้งสิ้น (คะแนนเต็ม 50 คะแนน)</th>
-                        <th>50</th>
-                        <th>
-                            <p id="totalScore">--</p>
-                        </th>
-                    </tr>
-                </table>
+        <!-- Modal -->
+        <div id="evaluation-modal" style="display: none;">
+            <div class="modal-content">
+                <button class="close-btn" onclick="closeModal()">ปิด</button>
+                <h3 id="modal-title"></h3>
+                <form id="evaluation-form" onsubmit="submitEvaluation(event)">
+                    <input type="hidden" id="requestIdInput" name="requestId">
 
-                <div class="comment-section">
-                    <label for="additionalComments">แสดงความคิดเห็นเพิ่มเติม:</label>
-                    <textarea name="additionalComments" id="additionalComments" placeholder="กรุณาใส่ความคิดเห็น..."
-                        required></textarea>
-                </div>
-                <button type="submit">ส่งการประเมิน</button>
-            </form>
+                    <table>
+                        <tr>
+                            <th>หัวข้อการประเมิน</th>
+                            <th>คะแนนเต็ม</th>
+                            <th>คะแนนที่ได้</th>
+                        </tr>
+                        <tr>
+                            <td class="left-align">1. เนื้อหาครบถ้วนตามหัวข้อที่กำหนด</td>
+                            <td>15</td>
+                            <td><input type="number" name="score1" max="15" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">2. รูปแบบของสื่อเหมาะสมกับเนื้อหา</td>
+                            <td>5</td>
+                            <td><input type="number" name="score2" max="5" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">3. ความสวยงามของสื่อที่ใช้</td>
+                            <td>5</td>
+                            <td><input type="number" name="score3" max="5" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">4. การใช้ภาษาในการนำเสนอ</td>
+                            <td>5</td>
+                            <td><input type="number" name="score4" max="5" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">5. การตอบคำถาม</td>
+                            <td>10</td>
+                            <td><input type="number" name="score5" max="10" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">6. นำเสนอภายในเวลาที่กำหนด</td>
+                            <td>5</td>
+                            <td><input type="number" name="score6" max="5" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <td class="left-align">7. บุคลิกภาพและการแต่งกาย</td>
+                            <td>5</td>
+                            <td><input type="number" name="score7" max="5" min="0" required></td>
+                        </tr>
+                        <tr>
+                            <th>รวมคะแนนทั้งสิ้น (คะแนนเต็ม 50 คะแนน)</th>
+                            <th>50</th>
+                            <th>
+                                <p id="totalScore">--</p>
+                            </th>
+                        </tr>
+                    </table>
+
+                    <div class="comment-section">
+                        <label for="additionalComments">แสดงความคิดเห็นเพิ่มเติม:</label>
+                        <textarea name="additionalComments" id="additionalComments" placeholder="กรุณาใส่ความคิดเห็น..."
+                            required></textarea>
+                    </div>
+                    <button type="submit">ส่งการประเมิน</button>
+                </form>
+            </div>
         </div>
     </div>
+
 
     <script>
         const BASE_URL = "http://localhost:3000"; // URL ของเซิร์ฟเวอร์ Express.js
@@ -366,7 +401,9 @@
                 });
         }
     </script>
-
+ <div id="footer-container">
+    <%- include('partials/footer.html') %>
+</div>
 </body>
 
 </html>
