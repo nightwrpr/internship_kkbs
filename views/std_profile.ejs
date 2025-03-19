@@ -110,29 +110,43 @@
 </head>
 
 <body>
-    <h2>โปรไฟล์นักศึกษา</h2>
-    <div class="profile-container">
-        <div>
-            <label>ชื่อผู้ใช้:</label>
-            <span>สมชาย สมมติ</span>
+    <div id="sidebar-container">
+        <%- include('partials/sidebar', { user: user }) %> <!-- ส่งข้อมูล user ไปที่ sidebar -->
+    </div>
+    <div class="header">
+        <span class="material-symbols-outlined">menu</span>
+        <h5>ข้อมูลส่วนตัวนักศึกษา</h5>
+        <span class="material-symbols-outlined">more_vert</span>
+    </div>
+
+    <div class="main-content">
+        <div class="profile-container">
+            <h2>โปรไฟล์นักศึกษา</h2>
+            <div>
+                <label>ชื่อผู้ใช้:</label>
+                <span>สมชาย สมมติ</span>
+            </div>
+            <div>
+                <label>อีเมล:</label>
+                <span>somchai@example.com</span>
+            </div>
+            <div>
+                <label>สาขาวิชา:</label>
+                <span>วิศวกรรมศาสตร์</span>
+            </div>
+            <div>
+                <label>สถานะการเรียน:</label>
+                <span>กำลังศึกษา</span>
+            </div>
+            <div>
+                <label>สถานะการฝึกงาน:</label>
+                <span>ยังไม่ได้ฝึกงาน</span>
+            </div>
         </div>
-        <div>
-            <label>อีเมล:</label>
-            <span>somchai@example.com</span>
-        </div>
-        <div>
-            <label>สาขาวิชา:</label>
-            <span>วิศวกรรมศาสตร์</span>
-        </div>
-        <div>
-            <label>สถานะการเรียน:</label>
-            <span>กำลังศึกษา</span>
-        </div>
-        <div>
-            <label>สถานะการฝึกงาน:</label>
-            <span>ยังไม่ได้ฝึกงาน</span>
-        </div>
-        <button>แก้ไขโปรไฟล์</button>
+    </div>
+    <div id="footer-container">
+        <!-- รวม footer -->
+        <%- include('partials/footer.html') %>
     </div>
 </body>
 
