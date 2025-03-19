@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานการฝึกงานที่ส่งมา</title>
+    <link rel="stylesheet" href="/stylesheets/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=block">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            color: #000080;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            max-width: 600px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #000080;
+            color: white;
+        }
+
+        button {
+            background-color: #000080;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Modal Style */
+        #company-details-modal {
+            display: flex;
+            /* ใช้ Flexbox */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            /* สีพื้นหลังที่มืด */
+            justify-content: center;
+            /* จัดกลางในแนวนอน */
+            align-items: center;
+            /* จัดกลางในแนวตั้ง */
+            z-index: 9999;
+            /* ให้แน่ใจว่า Modal อยู่เหนือทุกอย่าง */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 60%;
+            /* ขนาดที่ต้องการ */
+            max-width: 800px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: left;
+        }
+
+        .modal-content h3 {
+            text-align: center;
+            color: #000080;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        #search-input {
+            width: 100%;
+            max-width: 800px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sidebar-container">
+        <%- include('partials/sidebar') %> <!-- ไม่ต้องส่งข้อมูล user ไปใหม่ -->
+    </div>
+    <div class="container">
+        <h2>รายงานการฝึกงานที่ส่งมา</h2>
+
+        <!-- แถบค้นหา -->
+        <input type="text" id="search-input" placeholder="ค้นหาชื่อนักศึกษา หรือ โปรแกรมฝึกงาน..."
+            onkeyup="searchReports()">
+
+        <!-- ตารางรายงาน -->
+        <table id="reportsTable">
+            <thead>
+                <tr>
+                    <th>ชื่อนักศึกษา</th>
+                    <th>โปรแกรมฝึกงาน</th>
+                    <th>สถานะ</th>
+                    <th>ดูรายงาน</th>
+                    <th>ความคิดเห็น/คะแนน</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% documents.forEach(doc=> { %>
+                    <tr>
+                        <td>
+                            <%= doc.student_name %> <!-- ชื่อนักศึกษา -->
+                        </td>
+                        <td>
+                            <%= doc.company_name %> <!-- โปรแกรมฝึกงาน -->
+                        </td>
+                        <td>
+                            <% if (doc.status==='pending' ) { %>
+                                <span class="status pending">ยังไม่ตรวจ</span>
+                                <% } else { %>
+                                    <span class="status reviewed">ตรวจแล้ว</span>
+                                    <% } %>
+                        </td>
+                        <td>
+                            <% if (doc.file_path) { %>
+                                <button onclick="viewReport('<%= doc.file_path %>')">ดูรายงาน</button>
+                                <% } else { %>
+                                    <span>ไม่มีไฟล์</span>
+                                    <% } %>
+                        </td>
+                        <td>
+                            <a href="/check_report/report_evaluation?document_id=<%= doc.document_id %>">
+                                <button>ประเมินรายงาน</button>
+                            </a>
+                        </td>
+                    </tr>
+                    <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal สำหรับแสดงรายละเอียดเอกสาร -->
+    <div id="details-modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h3>เอกสารที่ดู</h3>
+            <ul id="document-list"></ul> <!-- เพิ่มรายการเอกสารที่แสดงใน Modal -->
+            <div id="pdf-viewer-container"></div> <!-- เพิ่ม container สำหรับ iframe PDF -->
+            <div class="button-container">
+                <button onclick="closeModal()">ปิด</button>
+            </div>
+        </div>
+    </div>
+    <div id="footer-container">
+        <%- include('partials/footer.html') %> <!-- แสดง Footer -->
+    </div>
+
+    <script>
+        function searchReports() {
+            let input = document.getElementById("search-input");
+            let filter = input.value.toLowerCase();
+            let table = document.getElementById("reportsTable");
+            let rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                let name = cells[0].textContent.toLowerCase();
+                let program = cells[1].textContent.toLowerCase();
+                if (name.includes(filter) || program.includes(filter)) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        function viewReport(filePath) {
+            if (filePath) {
+                // 🔹 แปลง backslash เป็น slash (ป้องกันปัญหา Windows path)
+                let cleanedFilePath = filePath.replace(/\\/g, '/');
+
+                // 🔹 ดึงเฉพาะชื่อไฟล์ โดยตัด path ที่ไม่จำเป็นออก
+                let fileName = cleanedFilePath.split("/").pop();
+                let fileUrl = '/uploads/' + fileName; // แก้ให้เข้ากับ static path ของ Express.js
+
+                console.log('🛠 filePath จากฐานข้อมูล:', filePath);
+                console.log('🛠 URL ที่สร้าง:', fileUrl);
+
+                // 🔹 แสดงลิงก์ของไฟล์ PDF ในรายการเอกสาร
+                const documentList = document.getElementById("document-list");
+                if (documentList) {
+                    documentList.innerHTML = ""; // เคลียร์ข้อมูลเก่าก่อน (ป้องกันลิงก์ซ้ำ)
+
+                    const listItem = document.createElement("li");
+                    const fileLink = document.createElement("a");
+
+                    fileLink.href = fileUrl;
+                    fileLink.innerText = fileName;  // แสดงชื่อไฟล์
+                    fileLink.target = "_blank";
+                    listItem.appendChild(fileLink);
+                    documentList.appendChild(listItem);
+                }
+
+                // 🔹 แสดง PDF ใน iframe (เคลียร์ค่าเก่าก่อน)
+                const pdfViewerContainer = document.getElementById("pdf-viewer-container");
+                if (pdfViewerContainer) {
+                    pdfViewerContainer.innerHTML = ""; // เคลียร์ iframe เก่าก่อนโหลดใหม่
+                    loadPdfInIframe(fileUrl, pdfViewerContainer);
+                }
+
+                // 🔹 เปิด modal
+                document.getElementById("details-modal").style.display = "block";
+            } else {
+                alert('❌ ไม่มีไฟล์ให้ดู');
+            }
+        }
+        function loadPdfInIframe(pdfUrl, container) {
+            const iframe = document.createElement("iframe");
+            iframe.src = pdfUrl; // ใช้ URL ของไฟล์ PDF
+            iframe.width = "100%";
+            iframe.height = "500px"; // กำหนดความสูงของ iframe
+            iframe.style.border = "none"; // เอาขอบออกให้ดูสะอาดขึ้น
+            container.appendChild(iframe);
+        }
+
+        function closeModal() {
+            document.getElementById("details-modal").style.display = "none";
+        }
+    </script>
+
+</body>
+
+</html>

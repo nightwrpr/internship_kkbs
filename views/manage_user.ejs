@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แอดมินจัดการข้อมูลผู้ใช้</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- สำหรับไอคอน -->
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            text-align: center;
+            color: #000080;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table,
+        th,
+        td {
+            border: 1px solid #ccc;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        button {
+            padding: 5px 10px;
+            cursor: pointer;
+            margin: 5px;
+            background-color: #000080;
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0000cd;
+        }
+
+        .search-container {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select {
+            padding: 8px;
+            margin-bottom: 20px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .dropdown-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        select {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 10px;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #searchUser {
+            width: 100%;
+            /* ปรับความกว้างให้มากขึ้น เช่น 90% ของหน้าจอ */
+            max-width: 800px;
+            /* จำกัดความกว้างสูงสุดเพื่อไม่ให้กว้างเกินไป */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>จัดการข้อมูลผู้ใช้</h1>
+
+    <!-- แถบค้นหาผู้ใช้ -->
+    <div class="search-container">
+        <input type="text" id="searchUser" placeholder="ค้นหาผู้ใช้ตามชื่อ" onkeyup="searchUser()">
+    </div>
+    <!-- ปุ่มเพิ่มผู้ใช้ใหม่ -->
+    <div class="add-user-container" style="text-align: center; margin-bottom: 20px;">
+        <button onclick="openAddUserModal()">เพิ่มผู้ใช้ใหม่</button>
+    </div>
+
+    <!-- แถบเลือกบทบาทเพื่อจัดเรียง -->
+    <div class="dropdown-container">
+        <label for="roleFilter">เลือกบทบาทในการจัดเรียง:</label>
+        <select id="roleFilter" onchange="filterByRole()">
+            <option value="">เลือกบทบาท</option>
+            <option value="นักศึกษา">นักศึกษา</option>
+            <option value="อาจารย์">อาจารย์</option>
+            <option value="ผู้ประเมินภายนอก">ผู้ประเมินภายนอก</option>
+            <option value="ผู้ให้คำปรึกษา">พี่เลี้ยง</option>
+        </select>
+    </div>
+
+    <!-- ตารางแสดงข้อมูลผู้ใช้ -->
+    <table id="userTable">
+        <thead>
+            <tr>
+                <th>รหัสผู้ใช้</th>
+                <th>ชื่อนักศึกษา</th>
+                <th>บทบาท</th>
+                <th>การกระทำ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% users.forEach(user => { %>
+                <tr>
+                    <td><%= user.user_id %></td>
+                    <td><%= user.name %></td>
+                    <td><%= user.role %></td>
+                    <td>
+                        <button onclick="openModal('<%= user.user_id %>', '<%= user.name %>', '<%= user.role %>')">อัปเดต</button>
+                        <button onclick="confirmDelete('<%= user.user_id %>')">ลบ</button>
+                    </td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+
+    <!-- Modal สำหรับการอัปเดตข้อมูล -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>แก้ไขข้อมูลผู้ใช้</h2>
+            <form id="updateForm" onsubmit="return validateForm()">
+                <input type="hidden" id="userId">
+                <div>
+                    <label for="name">ชื่อ:</label>
+                    <input type="text" id="name" placeholder="กรอกชื่อผู้ใช้" required>
+                </div>
+
+                <div>
+                    <label for="email">อีเมล:</label>
+                    <input type="email" id="email" placeholder="กรอกอีเมลผู้ใช้" required>
+                </div>
+
+                <div>
+                    <label for="role">บทบาท:</label>
+                    <select id="role" onchange="updateExtraFields()" required>
+                        <option value="student">นักศึกษา</option>
+                        <option value="mentor">พี่เลี้ยง</option>
+                        <option value="adviser">อาจารย์</option>
+                        <option value="evaluator">ผู้ประเมินภายนอก</option>
+                    </select>
+                </div>
+
+                <!-- ฟิลด์สำหรับกรอกข้อมูลที่เกี่ยวข้องกับบทบาทเฉพาะ -->
+                <div id="extraFields">
+                    <label for="major">สาขาวิชา:</label>
+                    <input type="text" id="major" placeholder="กรอกสาขาวิชาของนักศึกษา" required>
+
+                    <label for="status">สถานะการศึกษา:</label>
+                    <input type="text" id="status" placeholder="กรอกสถานะการศึกษา" required>
+                </div>
+
+                <div class="button-container">
+                    <button type="submit">บันทึก</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal()">ยกเลิก</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ฟังก์ชันยืนยันการลบ
+        function confirmDelete(userId) {
+            if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้?")) {
+                deleteUser(userId);
+            }
+        }
+
+        // ฟังก์ชันลบผู้ใช้
+        function deleteUser(userId) {
+            let table = document.getElementById("userTable");
+            let rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                if (cells[0].innerText == userId) {
+                    table.deleteRow(i);
+                    alert("ลบข้อมูลผู้ใช้สำเร็จ!");
+                    return;
+                }
+            }
+            alert("ไม่พบข้อมูลผู้ใช้ที่ต้องการลบ!");
+        }
+        // ฟังก์ชันเปิด Modal เพื่อแก้ไขข้อมูล
+        function openModal(userId, userName, userRole) {
+            document.getElementById("userId").value = userId;
+            document.getElementById("name").value = userName;
+            document.getElementById("role").value = userRole;
+            document.getElementById("updateModal").style.display = "block";
+        }
+
+        // ฟังก์ชันปิด Modal
+        function closeModal() {
+            document.getElementById("updateModal").style.display = "none";
+        }
+
+        function searchUser() {
+            let input = document.getElementById("searchUser").value.toUpperCase();  // แก้ไขเป็น searchUser
+            let table = document.getElementById("userTable");
+            let rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                let userName = cells[1].textContent || cells[1].innerText;
+                if (userName.toUpperCase().indexOf(input) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        // ฟังก์ชันกรองผู้ใช้ตามบทบาท
+        function filterByRole() {
+            let roleFilter = document.getElementById("roleFilter").value;
+            let table = document.getElementById("userTable");
+            let rows = table.getElementsByTagName("tr");
+
+            for (let i = 1; i < rows.length; i++) {
+                let cells = rows[i].getElementsByTagName("td");
+                let userRole = cells[2].textContent || cells[2].innerText;
+                if (roleFilter === "" || userRole === roleFilter) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+
+        // ฟังก์ชันอัปเดตข้อมูลผู้ใช้
+        function updateExtraFields() {
+            const role = document.getElementById("role").value;
+            const extraFields = document.getElementById("extraFields");
+            extraFields.innerHTML = '';  // ล้างข้อมูลเก่า
+
+            if (role === "student") {
+                extraFields.innerHTML = `
+                    <label for="major">สาขาวิชา:</label>
+                    <input type="text" id="major" placeholder="กรอกสาขาวิชาของนักศึกษา" required>
+                    
+                    <label for="status">สถานะการศึกษา:</label>
+                    <input type="text" id="status" placeholder="กรอกสถานะการศึกษา" required>
+                `;
+            } else if (role === "mentor") {
+                extraFields.innerHTML = `
+                    <label for="company">บริษัท/องค์กร:</label>
+                    <input type="text" id="company" placeholder="กรอกชื่อบริษัท/องค์กร" required>
+                    
+                    <label for="position">ตำแหน่ง:</label>
+                    <input type="text" id="position" placeholder="กรอกตำแหน่งในบริษัท" required>
+                `;
+            } else if (role === "adviser") {
+                extraFields.innerHTML = `
+                    <label for="department">ภาควิชา:</label>
+                    <input type="text" id="department" placeholder="กรอกชื่อภาควิชา" required>
+                `;
+            } else if (role === "evaluator") {
+                extraFields.innerHTML = `
+                    <label for="evaluation-area">พื้นที่การประเมิน:</label>
+                    <input type="text" id="evaluation-area" placeholder="กรอกพื้นที่การประเมิน" required>
+                `;
+            }
+        }
+
+        function cancel() {
+            // รีเซ็ตฟอร์มเมื่อกดยกเลิก
+            document.querySelector("form").reset();
+        }
+
+        // เรียกใช้ฟังก์ชันเพื่อแสดงฟิลด์ที่เกี่ยวข้อง
+        updateExtraFields();
+        // ฟังก์ชันเปิด Modal สำหรับเพิ่มผู้ใช้ใหม่
+        function openAddUserModal() {
+            document.getElementById("updateForm").reset(); // ล้างข้อมูลฟอร์ม
+            document.getElementById("userId").value = ""; // เคลียร์ userId
+            document.getElementById("updateModal").style.display = "block";
+        }
+    </script>
+</body>
+
+</html>

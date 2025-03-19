@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ประเมินการนำเสนอ-อาจารย์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            color: #000080;
+            text-align: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            width: 80%;
+            max-width: 600px;
+            /* เพิ่มขนาดสูงสุด */
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            margin-bottom: 20px;
+            display: block;
+            /* ให้มันแสดงเต็มความกว้าง */
+            margin-left: auto;
+            /* ให้มันชิดกลาง */
+            margin-right: auto;
+            /* ให้มันชิดกลาง */
+        }
+
+        table {
+            width: 80%;
+            margin: 0 auto;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .left-align {
+            text-align: left;
+            /* ทำให้ข้อความใน <td> ชิดซ้าย */
+            padding-left: 15px;
+            /* เพิ่มระยะห่างทางซ้าย */
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #000080;
+            color: white;
+        }
+
+        button {
+            background-color: #000080;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+            transform: scale(1.05);
+        }
+
+        /* Modal styles */
+        #evaluation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 60%;
+            max-width: 800px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-height: 80vh;
+            /* กำหนดความสูงสูงสุด */
+            overflow: auto;
+            /* เลื่อนเฉพาะในแนวตั้ง */
+        }
+
+        .close-btn {
+            background-color: #ff4d4d;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+            float: right;
+        }
+
+        .close-btn:hover {
+            background-color: #ff1a1a;
+        }
+
+        .comment-section textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #search-input {
+            width: 100%;
+            /* ปรับความกว้างให้มากขึ้น เช่น 90% ของหน้าจอ */
+            max-width: 800px;
+            /* จำกัดความกว้างสูงสุดเพื่อไม่ให้กว้างเกินไป */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>รายชื่อนักศึกษาฝึกงาน</h2>
+
+    <input type="text" id="search-input" placeholder="ค้นหารหัสนักศึกษาหรือชื่อนักศึกษา..." onkeyup="filterStudents()">
+
+    <table>
+        <thead>
+            <tr>
+                <th>รหัสนักศึกษา</th>
+                <th>ชื่อนักศึกษา</th>
+                <th>การประเมินการนำเสนอ</th>
+            </tr>
+        </thead>
+        <tbody id="student-table"></tbody>
+    </table>
+
+    <!-- Modal -->
+    <div id="evaluation-modal" style="display: none;">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()">ปิด</button>
+            <h3 id="modal-title"></h3>
+            <table>
+                <tr>
+                    <th>หัวข้อการประเมิน</th>
+                    <th>คะแนนเต็ม</th>
+                    <th>คะแนนที่ได้</th>
+                </tr>
+                <tr>
+                    <td class="left-align">1. เนื้อหาครบถ้วนตามหัวข้อที่กำหนด</td>
+                    <td>15</td>
+                    <td><input type="number" name="score1" max="15" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">2. รูปแบบของสื่อเหมาะสมกับเนื้อหาที่นำเสนอ</td>
+                    <td>5</td>
+                    <td><input type="number" name="score2" max="5" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">3. ความสวยงามของสื่อที่ใช้</td>
+                    <td>5</td>
+                    <td><input type="number" name="score3" max="5" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">4. การใช้ภาษาในการนำเสนอ</td>
+                    <td>5</td>
+                    <td><input type="number" name="score4" max="5" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">5. การตอบคำถาม</td>
+                    <td>10</td>
+                    <td><input type="number" name="score5" max="10" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">6. นำเสนอภายในเวลาที่กำหนด</td>
+                    <td>5</td>
+                    <td><input type="number" name="score6" max="5" min="0" required></td>
+                </tr>
+                <tr>
+                    <td class="left-align">7. บุคลิกภาพและการแต่งกาย</td>
+                    <td>5</td>
+                    <td><input type="number" name="score7" max="5" min="0" required></td>
+                </tr>
+                <tr>
+                    <th>รวมคะแนนทั้งสิ้น (คะแนนเต็ม 50 คะแนน)</th>
+                    <th>50</th>
+                    <th>
+                        <p id="totalScore">--</p>
+                    </th>
+                </tr>
+            </table>
+            <div class="comment-section">
+                <label for="additionalComments">แสดงความคิดเห็นเพิ่มเติม:</label>
+                <textarea name="additionalComments" id="additionalComments"
+                    placeholder="กรุณาใส่ความคิดเห็นของคุณที่นี่..." required></textarea>
+            </div>
+            <button onclick="submitEvaluation(currentStudentId)">ส่งการประเมิน</button>
+        </div>
+    </div>
+
+    <script>
+        const BASE_URL = "http://localhost:3000"; // URL ของเซิร์ฟเวอร์ Express.js
+        var students = [];
+    
+        // ดึงข้อมูลนักศึกษา
+        fetch(`${BASE_URL}/adviser_present_evaluation/dashboard/students`)
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) {
+                    students = data;
+                    createStudentTable(students);
+                } else {
+                    console.error('❌ Expected an array of students, but got:', data);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error loading students:', error);
+            });
+    
+        var currentStudentId = null;
+    
+        // ฟังก์ชันสำหรับสร้างตารางแสดงข้อมูลนักศึกษา
+        function createStudentTable(studentList) {
+            var tableBody = document.getElementById('student-table');
+            tableBody.innerHTML = '';
+            studentList.forEach(function (student) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${student.student_code}</td>
+                    <td>${student.name}</td>
+                    <td><button onclick="openModal('${student.request_id}', '${student.name}')">ประเมิน</button></td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    
+        // ฟังก์ชันค้นหานักศึกษา
+        function filterStudents() {
+            var searchInput = document.getElementById('search-input').value.toLowerCase();
+            var filteredStudents = students.filter(function (student) {
+                return student.student_code.includes(searchInput) || student.name.toLowerCase().includes(searchInput);
+            });
+            createStudentTable(filteredStudents);
+        }
+    
+        // ฟังก์ชันเปิด Modal สำหรับการประเมิน
+        function openModal(requestId, name) {
+            currentStudentId = requestId; // ตั้งค่า currentStudentId ให้เป็น request_id ของนักศึกษา
+            document.getElementById('modal-title').innerText = `ประเมินการนำเสนอของ ${name}`;
+            document.getElementById('evaluation-modal').style.display = 'flex';
+        }
+    
+        // ฟังก์ชันปิด Modal
+        function closeModal() {
+            document.getElementById('evaluation-modal').style.display = 'none';
+        }
+    
+        // คำนวณคะแนนรวม
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputs = document.querySelectorAll('input[type="number"]');
+            const totalScoreElement = document.getElementById('totalScore');
+    
+            function calculateTotal() {
+                let total = 0;
+                inputs.forEach(input => {
+                    total += Number(input.value) || 0;
+                });
+                totalScoreElement.textContent = total;
+            }
+    
+            inputs.forEach(input => {
+                input.addEventListener("input", calculateTotal);
+            });
+    
+            calculateTotal();
+        });
+    
+        // ฟังก์ชันบันทึกการประเมิน
+        function submitEvaluation() {
+            if (!currentStudentId) {
+                alert('ไม่พบรหัสนักศึกษาที่จะประเมิน');
+                return;
+            }
+    
+            const scoreInputs = document.querySelectorAll('input[type="number"]');
+            const scores = [];
+            scoreInputs.forEach(input => {
+                scores.push(Number(input.value) || 0);
+            });
+    
+            const additionalComments = document.getElementById('additionalComments').value;
+    
+            const request_id = currentStudentId; // ใช้ requestId ที่ได้รับจาก Modal
+    
+            const criteriaNames = [
+                "เนื้อหาครบถ้วนตามหัวข้อที่กำหนด",
+                "รูปแบบของสื่อเหมาะสมกับเนื้อหาที่นำเสนอ",
+                "ความสวยงามของสื่อที่ใช้",
+                "การใช้ภาษาในการนำเสนอ",
+                "การตอบคำถาม",
+                "นำเสนอภายในเวลาที่กำหนด",
+                "บุคลิกภาพและการแต่งกาย"
+            ];
+    
+            // ส่งข้อมูลการประเมินไปยัง backend
+            fetch(`${BASE_URL}/adviser_present_evaluation/dashboard/save`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    request_id,
+                    scores,
+                    additionalComments,
+                    criteriaNames
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    closeModal();
+                })
+                .catch(error => {
+                    console.error('❌ Error:', error);
+                    alert('เกิดข้อผิดพลาดในการส่งข้อมูล');
+                });
+        }
+    </script>
+    
+</body>
+
+</html>

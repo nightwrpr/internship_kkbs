@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการเอกสารในระบบ</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit&display=swap">
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: #ffffff;    
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #000080;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background-color: #000080;
+            color: #ffffff;
+            padding: 10px;
+            text-align: center;
+        }
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        .btn {
+            background-color: #000080;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>จัดการเอกสารในระบบ</h2>
+        <table id="documentTable">
+            <thead>
+                <tr>
+                    <th>รหัสเอกสาร</th>
+                    <th>ชื่อเอกสาร</th>
+                    <th>รหัสนักศึกษา</th>
+                    <th>ชื่อคนส่ง</th>
+                    <th>วันที่อัพโหลด</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% documents.forEach(doc => { %>
+                <tr>
+                    <td><%= doc.document_id %></td>
+                    <td><%= doc.document_type %></td>
+                    <td><%= doc.student_id %></td>
+                    <td><%= doc.name %></td>
+                    <td><%= doc.create_up.toISOString().slice(0, 10) %></td>
+                    <td>
+                        <a href="<%= doc.file_path %>" target="_blank">
+                            <button class="btn">ดู</button>
+                        </a>
+                        <button class="btn" onclick="confirmDelete('<%= doc.document_id %>', this)">ลบ</button>
+                    </td>
+                </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function confirmDelete(documentId, button) {
+            const confirmDelete = confirm('คุณต้องการลบเอกสาร ' + documentId + ' ใช่หรือไม่?');
+            if (confirmDelete) {
+                fetch('/manage_document/documents/delete/' + documentId, { method: 'POST' })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const row = button.closest('tr');
+                            row.remove();
+                            alert('ลบเอกสารสำเร็จ');
+                        } else {
+                            alert('ลบเอกสารไม่สำเร็จ');
+                        }
+                    });
+            }
+        }
+    </script>
+</body>
+
+
+</html>

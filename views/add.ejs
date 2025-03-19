@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มข้อมูลบริษัทและตำแหน่งงาน</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        h2 {
+            color: #000080;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button {
+            background-color: #000080;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+        }
+
+        .position-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #ddd;
+        }
+
+        .position-entry {
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #f4f4f4;
+            border-radius: 5px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .remove-position {
+            color: red;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .position-entry label {
+            font-size: 14px;
+        }
+
+        .position-entry input, .position-entry textarea {
+            font-size: 14px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h2>เพิ่มข้อมูลบริษัทและตำแหน่งงาน</h2>
+    
+    <form method="POST" action="/add">
+        <!-- ฟอร์มบริษัท -->
+        <div>
+          <label for="company_name">ชื่อบริษัท:</label>
+          <input type="text" id="company_name" name="company_name" placeholder="กรอกชื่อบริษัท" required>
+        </div>
+      
+        <div>
+          <label for="address">ที่อยู่:</label>
+          <textarea id="address" name="address" placeholder="กรอกที่อยู่บริษัท" required></textarea>
+        </div>
+      
+        <div>
+          <label for="email">อีเมล:</label>
+          <input type="email" id="email" name="email" placeholder="กรอกอีเมล" >
+        </div>
+      
+        <div>
+          <label for="phone_number">เบอร์โทรศัพท์:</label>
+          <input type="tel" id="phone_number" name="phone_number" placeholder="กรอกเบอร์โทรศัพท์" >
+        </div>
+      
+        <!-- ฟอร์มตำแหน่งงาน -->
+        <div class="position-section">
+          <h3>ตำแหน่งงานที่เปิดรับ</h3>
+      
+          <div id="positions-container">
+            <!-- ตำแหน่งงานจะเพิ่มที่นี่ -->
+            <div class="position-entry">
+              <label for="position_name">ชื่อตำแหน่ง:</label>
+              <input type="text" name="position_name[]" placeholder="กรอกชื่อตำแหน่ง" required>
+      
+              <label for="number_of_open">จำนวนตำแหน่งที่เปิดรับ:</label>
+              <input type="number" name="number_of_open[]" placeholder="กรอกจำนวนตำแหน่งที่เปิดรับ" required>
+      
+              <label for="description">รายละเอียดตำแหน่ง:</label>
+              <textarea name="description[]" placeholder="กรอกรายละเอียดตำแหน่ง"></textarea>
+      
+              <a class="remove-position" onclick="removePosition(this)">ลบตำแหน่งนี้</a>
+            </div>
+          </div>
+      
+          <button type="button" onclick="addPosition()">เพิ่มตำแหน่งงานใหม่</button>
+        </div>
+      
+        <div class="button-container">
+          <button type="submit">บันทึกข้อมูล</button>
+          <button type="button" onclick="window.history.back()">ยกเลิก</button>
+        </div>
+      </form>
+      
+    
+    <script>
+        // เพิ่มตำแหน่งงาน
+        function addPosition() {
+            const container = document.getElementById('positions-container');
+            const newPositionEntry = document.createElement('div');
+            newPositionEntry.classList.add('position-entry');
+    
+            newPositionEntry.innerHTML = `
+                <label for="position_name">ชื่อตำแหน่ง:</label>
+                <input type="text" name="position_name[]" placeholder="กรอกชื่อตำแหน่ง" required>
+    
+                <label for="number_of_open">จำนวนตำแหน่งที่เปิดรับ:</label>
+                <input type="number" name="number_of_open[]" placeholder="กรอกจำนวนตำแหน่งที่เปิดรับ" required>
+    
+                <label for="description">รายละเอียดตำแหน่ง:</label>
+                <textarea name="description[]" placeholder="กรอกรายละเอียดตำแหน่ง"></textarea>
+    
+                <a class="remove-position" onclick="removePosition(this)">ลบตำแหน่งนี้</a>
+            `;
+            container.appendChild(newPositionEntry);
+        }
+    
+        // ลบตำแหน่งงานที่ไม่ต้องการ
+        function removePosition(element) {
+            element.parentElement.remove();
+        }
+    </script>
+    
+    </body>
+</html>

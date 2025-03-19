@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จัดการข้อมูลบริษัทและตำแหน่งงาน</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #000080;
+        }
+
+        form,
+        .modal-content {
+            max-width: 800px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+
+        input[list="company_names"],
+        input[list="intern_positions"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            margin-bottom: 12px;
+        }
+
+        button {
+            background-color: #000080;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto 0 auto;
+            display: block;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            background-color: #000080;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            max-width: 200px;
+            margin: 20px auto 0 auto;
+            display: block;
+        }
+
+        .modal-content button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+
+            form,
+            .modal-content {
+                padding: 15px;
+            }
+
+            .form-group input,
+            .form-group select,
+            .form-group textarea {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            button {
+                max-width: 100%;
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            table {
+                font-size: 14px;
+            }
+
+            label {
+                font-size: 14px;
+            }
+        }
+
+        #searchInput {
+            width: 90%;
+            /* กำหนดความกว้างเป็น 90% ของพื้นที่ */
+            max-width: 800px;
+            /* จำกัดความกว้างสูงสุด */
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            display: block;
+            margin: 0 auto;
+            /* ทำให้ช่องค้นหากลางหน้าจอ */
+        }
+    </style>
+</head>
+
+<body> 
+    <h1>จัดการข้อมูลบริษัทและตำแหน่งงาน</h1>
+
+    <!-- ฟอร์มค้นหาข้อมูล -->
+    <input type="text" id="searchInput" placeholder="ค้นหาบริษัทหรือตำแหน่งงาน" onkeyup="searchCompanyOrPosition()">
+
+    <!-- ตารางข้อมูลบริษัท -->
+    <h2>ข้อมูลบริษัท</h2>
+    <button onclick="openCompanyModal()">เพิ่มบริษัท</button>
+    <table id="companyTable" border="1">
+        <thead>
+            <tr>
+                <th>ชื่อบริษัท</th>
+                <th>ที่อยู่</th>
+                <th>อีเมล</th>
+                <th>หมายเลขโทรศัพท์</th>
+                <th>จัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (companies && companies.length > 0) { %>
+                <% companies.forEach(function(company) { %>
+                    <tr>
+                        <td><%= company.company_name %></td>
+                        <td><%= company.company_address %></td>
+                        <td><%= company.company_email %></td>
+                        <td><%= company.company_phone %></td>
+                        <td>
+                            <button onclick="editCompany('<%= company.company_id %>', '<%= company.company_name %>', '<%= company.company_address %>', '<%= company.company_email %>', '<%= company.company_phone %>')">แก้ไข</button>
+                            <button onclick="deleteCompany('<%= company.company_id %>')">ลบ</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr><td colspan="5">ไม่มีบริษัทที่เปิดรับ</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+    
+    <!-- ตารางตำแหน่งงาน -->
+    <h2>ตำแหน่งงานที่เปิดรับ</h2>
+    <button onclick="openPositionModal()">เพิ่มตำแหน่งงาน</button>
+    <table id="positionTable" border="1">
+        <thead>
+            <tr>
+                <th>ตำแหน่งงาน</th>
+                <th>จำนวนที่เปิดรับ</th>
+                <th>รายละเอียด</th>
+                <th>บริษัท</th>
+                <th>จัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% if (positions && positions.length > 0) { %>
+                <% positions.forEach(function(position) { %>
+                    <tr>
+                        <td><%= position.position_title %></td>
+                        <td><%= position.position_quantity %></td>
+                        <td><%= position.description || 'ไม่มีรายละเอียด' %></td>
+                        <td><%= position.company_name || 'ไม่พบข้อมูลบริษัท' %></td>
+                        <td>
+                            <button onclick="editPosition('<%= position.position_id %>', '<%= position.position_title %>', '<%= position.position_quantity %>', '<%= position.description %>')">แก้ไข</button>
+                            <button onclick="deletePosition('<%= position.position_id %>')">ลบ</button>
+                        </td>
+                    </tr>
+                <% }); %>
+            <% } else { %>
+                <tr><td colspan="5">ไม่มีตำแหน่งงานที่เปิดรับ</td></tr>
+            <% } %>
+        </tbody>
+    </table>
+
+    <!-- Modal สำหรับบริษัท -->
+    <div id="companyModal" class="modal">
+        <div class="modal-content">
+            <h3 id="companyModalTitle">เพิ่มบริษัทใหม่</h3>
+            <input type="hidden" id="companyId">
+            <label>ชื่อบริษัท</label>
+            <input type="text" id="companyName">
+            <label>ที่อยู่</label>
+            <input type="text" id="companyAddress">
+            <label>อีเมล</label>
+            <input type="email" id="companyEmail">
+            <label>เบอร์โทรศัพท์</label>
+            <input type="text" id="companyPhone">
+            <button onclick="saveCompany()">บันทึก</button>
+            <button onclick="closeCompanyModal()">ปิด</button>
+        </div>
+    </div>
+
+    <!-- Modal สำหรับตำแหน่งงาน -->
+    <div id="positionModal" class="modal">
+        <div class="modal-content">
+            <h3 id="positionModalTitle">เพิ่มตำแหน่งงานใหม่</h3>
+            <input type="hidden" id="positionId">
+            <label>ตำแหน่งงาน</label>
+            <input type="text" id="positionName">
+            <label>จำนวนที่เปิดรับ</label>
+            <input type="number" id="positionQuantity">
+            <label>รายละเอียด</label>
+            <input type="text" id="positionDescription">
+            <button onclick="savePosition()">บันทึก</button>
+            <button onclick="closePositionModal()">ปิด</button>
+        </div>
+    </div>
+
+    <script>
+        // ค้นหา
+        function searchCompanyOrPosition() {
+            const searchInput = document.getElementById("searchInput").value.toLowerCase();
+
+            document.querySelectorAll("#companyTable tbody tr").forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(searchInput) ? "" : "none";
+            });
+
+            document.querySelectorAll("#positionTable tbody tr").forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(searchInput) ? "" : "none";
+            });
+        }
+
+        // Modal บริษัท
+        function openCompanyModal() {
+            document.getElementById("companyModalTitle").innerText = "เพิ่มบริษัทใหม่";
+            document.getElementById("companyId").value = "";
+            document.getElementById("companyName").value = "";
+            document.getElementById("companyAddress").value = "";
+            document.getElementById("companyEmail").value = "";
+            document.getElementById("companyPhone").value = "";
+            document.getElementById("companyModal").style.display = "block";
+        }
+
+        function editCompany(id, name, address, email, phone) {
+            document.getElementById("companyModalTitle").innerText = "แก้ไขบริษัท";
+            document.getElementById("companyId").value = id;
+            document.getElementById("companyName").value = name;
+            document.getElementById("companyAddress").value = address;
+            document.getElementById("companyEmail").value = email;
+            document.getElementById("companyPhone").value = phone;
+            document.getElementById("companyModal").style.display = "block";
+        }
+
+        function closeCompanyModal() {
+            document.getElementById("companyModal").style.display = "none";
+        }
+
+        function saveCompany() {
+            const id = document.getElementById("companyId").value;
+            const name = document.getElementById("companyName").value.trim();
+            const address = document.getElementById("companyAddress").value.trim();
+            const email = document.getElementById("companyEmail").value.trim();
+            const phone = document.getElementById("companyPhone").value.trim();
+
+            if (!name || !address || !email || !phone) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                return;
+            }
+
+            if (id) {
+                alert(`อัปเดตบริษัท ID: ${id}`);
+            } else {
+                alert(`เพิ่มบริษัท: ${name}`);
+            }
+
+            closeCompanyModal();
+        }
+
+        // Modal ตำแหน่ง
+        function openPositionModal() {
+            document.getElementById("positionModalTitle").innerText = "เพิ่มตำแหน่งงานใหม่";
+            document.getElementById("positionId").value = "";
+            document.getElementById("positionName").value = "";
+            document.getElementById("positionQuantity").value = "";
+            document.getElementById("positionDescription").value = "";
+            document.getElementById("positionModal").style.display = "block";
+        }
+
+        function editPosition(id, title, quantity, description) {
+            document.getElementById("positionModalTitle").innerText = "แก้ไขตำแหน่งงาน";
+            document.getElementById("positionId").value = id;
+            document.getElementById("positionName").value = title;
+            document.getElementById("positionQuantity").value = quantity;
+            document.getElementById("positionDescription").value = description;
+            document.getElementById("positionModal").style.display = "block";
+        }
+
+        function closePositionModal() {
+            document.getElementById("positionModal").style.display = "none";
+        }
+
+        function savePosition() {
+            const id = document.getElementById("positionId").value;
+            const title = document.getElementById("positionName").value.trim();
+            const quantity = document.getElementById("positionQuantity").value.trim();
+            const description = document.getElementById("positionDescription").value.trim();
+
+            if (!title || !quantity) {
+                alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+                return;
+            }
+
+            if (id) {
+                alert(`อัปเดตตำแหน่งงาน ID: ${id}`);
+            } else {
+                alert(`เพิ่มตำแหน่งงาน: ${title}`);
+            }
+
+            closePositionModal();
+        }
+
+        // ลบ
+        function deleteCompany(id) {
+            if (confirm(`ยืนยันลบบริษัท ID: ${id}?`)) {
+                alert(`ลบบริษัท ID: ${id}`);
+            }
+        }
+
+        function deletePosition(id) {
+            if (confirm(`ยืนยันลบตำแหน่งงาน ID: ${id}?`)) {
+                alert(`ลบตำแหน่งงาน ID: ${id}`);
+            }
+        }
+    </script>
+</body>
+</html>

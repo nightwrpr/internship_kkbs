@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เพิ่มข้อมูลผู้ใช้</title>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+            text-align: center;
+        }
+
+        h2 {
+            color: #000080;
+            margin-bottom: 20px;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            margin: 0 auto;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            background-color: #000080;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: rgba(0, 0, 128, 0.8);
+        }
+
+        .cancel-btn {
+            background-color: #ccc;
+        }
+
+        .cancel-btn:hover {
+            background-color: #aaa;
+        }
+
+        #extraFields {
+            margin-top: 20px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <h2>เพิ่มข้อมูลผู้ใช้</h2>
+    
+    <form method="POST" action="/add_user">
+        <div>
+            <label for="name">ชื่อ:</label>
+            <input type="text" id="name" name="name" placeholder="กรอกชื่อผู้ใช้" required>
+        </div>
+    
+        <div>
+            <label for="email">อีเมล:</label>
+            <input type="email" id="email" name="email" placeholder="กรอกอีเมลผู้ใช้" required>
+        </div>
+    
+        <div>
+            <label for="password">รหัสผ่าน:</label>
+            <input type="password" id="password" name="password" placeholder="กรอกรหัสผ่านผู้ใช้" required>
+        </div>
+    
+        <div>
+            <label for="role">บทบาท:</label>
+            <select id="role" name="role" onchange="updateExtraFields()">
+                <option value="student">นักศึกษา</option>
+                <option value="mentor">Mentor</option>
+                <option value="adviser">Adviser</option>
+                <option value="evaluator">Evaluator</option>
+            </select>
+        </div>
+    
+        <div id="extraFields">
+            <!-- ฟิลด์เพิ่มเติมจะถูกเพิ่มโดย JavaScript -->
+        </div>
+    
+        <div class="button-container">
+            <button type="submit">เพิ่มผู้ใช้ใหม่</button>
+            <button type="button" class="cancel-btn" onclick="cancel()">ยกเลิก</button>
+        </div>
+    </form>
+    
+    <script>
+        function updateExtraFields() {
+            const role = document.getElementById("role").value;
+            const extraFields = document.getElementById("extraFields");
+            extraFields.innerHTML = '';  // ล้างข้อมูลเก่า
+    
+            if (role === "student") {
+                extraFields.innerHTML = `
+                    <label for="student_code">รหัสนักศึกษา:</label>
+                    <input type="text" id="student_code" name="student_code" placeholder="กรอกรหัสนักศึกษาของผู้ใช้" required>
+                    
+                    <label for="major">สาขาวิชา:</label>
+                    <input type="text" id="major" name="major" placeholder="กรอกสาขาวิชาของนักศึกษา" required>
+                    
+                    <label for="status">สถานะการศึกษา:</label>
+                    <input type="text" id="status" name="status" placeholder="กรอกสถานะการศึกษา" required>
+                `;
+            } else if (role === "mentor") {
+                extraFields.innerHTML = `
+                    <label for="company">บริษัท/องค์กร:</label>
+                    <input type="text" id="company" name="company" placeholder="กรอกชื่อบริษัท/องค์กร" required>
+                    
+                    <label for="position">ตำแหน่ง:</label>
+                    <input type="text" id="position" name="position" placeholder="กรอกตำแหน่งในบริษัท" required>
+                `;
+            } else if (role === "adviser") {
+                extraFields.innerHTML = `
+                    <label for="department">ภาควิชา:</label>
+                    <input type="text" id="department" name="department" placeholder="กรอกชื่อภาควิชา" required>
+                `;
+            } else if (role === "evaluator") {
+                extraFields.innerHTML = `
+                    <label for="evaluation_area">พื้นที่การประเมิน:</label>
+                    <input type="text" id="evaluation_area" name="evaluation_area" placeholder="กรอกพื้นที่การประเมิน" required>
+                `;
+            }
+        }
+    
+        function cancel() {
+            document.querySelector("form").reset();
+            document.getElementById("extraFields").innerHTML = '';
+        }
+    
+        // เรียกครั้งแรก
+        updateExtraFields();
+    </script>
+    
+</body>
+
+</html>
