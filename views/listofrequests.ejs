@@ -13,7 +13,30 @@
         <%= title %>
     </title>
     <style>
-        /* Modal Style */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f9f9f9;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            /* เลื่อนออกจาก sidebar */
+            padding: 20px;
+            width: calc(100vw - 250px);
+            /* ป้องกันการเกินขอบจอ */
+            max-width: 100vw;
+            /* ไม่ให้เกินหน้าจอ */
+            box-sizing: border-box;
+            padding-top: 80px;
+        }
+
+        .topic {
+            text-align: center;
+            /* ✅ จัดให้อยู่ตรงกลาง */
+            color: #000080;
+            /* ✅ เพิ่มสีให้ดูดีขึ้น (ถ้าต้องการ) */
+        }
+
         #details-modal {
             display: none;
             position: fixed;
@@ -22,32 +45,32 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
             justify-content: center;
-            align-items: flex-end;
-            /* 🟢 เลื่อน Modal ขึ้นจาก Footer */
+            align-items: center;
             visibility: hidden;
             opacity: 0;
-            padding: 20px;
             transition: opacity 0.3s ease, visibility 0s 0.3s;
-            display: flex;
+            overflow: auto;
+            /* ✅ ทำให้เลื่อนขึ้นลงได้ถ้าสูงเกินจอ */
         }
 
+        /* ปรับ modal-content ให้อยู่ตรงกลาง และไม่ออกนอกจอ */
         .modal-content {
             background-color: #fff;
             padding: 20px;
-            border-radius: 8px;
             width: 60%;
             max-width: 800px;
             max-height: 90vh;
-            /* จำกัดความสูงไม่ให้เต็มจอ */
-            overflow-y: auto;
-            /* เพิ่ม Scroll ถ้าเนื้อหาเยอะ */
+            /* ✅ จำกัดความสูง */
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
             text-align: left;
-            animation: fadeIn 0.3s ease-out;
-            margin-bottom: 50px;
-            /* 🟢 เพิ่มระยะห่างจาก Footer */
+            overflow: auto;
+            /* ✅ ทำให้เลื่อนภายใน modal ได้ */
+            position: relative;
         }
+
 
         #details-modal.show {
             visibility: visible;
@@ -97,7 +120,7 @@
         }
 
         .status.approved {
-            background-color: #5bc0de;
+            background-color: #000080;
             color: white;
         }
 
@@ -107,7 +130,7 @@
         }
 
         button {
-            background-color: #007bff;
+            background-color: #000080;
             color: white;
             border: none;
             padding: 8px 16px;
@@ -118,7 +141,7 @@
         }
 
         button:hover {
-            background-color: #0056b3;
+            background-color: #7777bd;
         }
 
         .btn-back {
@@ -148,11 +171,14 @@
     <div id="sidebar-container"></div>
     <%- include('partials/sidebar', { user: teacher }) %>
 
-        <div class="main-content">
-            <div class="header d-flex justify-content-between align-items-center p-3 border-bottom">
-                <h5 class="mb-0">รายละเอียดคำขอฝึกงาน</h5>
-            </div>
+        <div class="header">
+            <span class="material-symbols-outlined">menu</span>
+            <h5 class="mb-0">คำร้องขอฝึกประสบการณ์</h5>
+            <span class="material-symbols-outlined">more_vert</span>
+        </div>
 
+        <div class="main-content">
+            <h2 class="topic">รายการคำร้องขอฝึกประสบการณ์</h2>
             <% requests.forEach(request=> { %>
                 <div class="container mt-4">
                     <div class="request-box">
@@ -178,9 +204,7 @@
                 </div>
                 <% }) %>
 
-                    <div class="container mt-4">
-                        <a href="/listofrequests" class="btn btn-primary">กลับสู่หน้ารายการคำขอฝึกงาน</a>
-                    </div>
+        </div>
         </div>
 
         <!-- Modal -->
