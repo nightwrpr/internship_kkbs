@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 const fs = require('fs');
 const db = require('./db'); // สำหรับการเชื่อมต่อฐานข้อมูล
+const bcrypt = require('bcryptjs');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var ejs = require('ejs');
